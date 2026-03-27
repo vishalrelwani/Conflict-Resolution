@@ -2,39 +2,56 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conflict Resolution Cheatsheet</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="script.js" defer></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f5f5f5; }
+        .dark-mode { background-color: #333; color: #f5f5f5; }
+        .tab { display: none; }
+        .tab-button { cursor: pointer; padding: 10px; margin: 5px; border: none; background: #007BFF; color: white; }
+        .tab-button.active { background: #0056b3; }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Conflict Resolution Cheatsheet</h1>
-    </header>
-    <main>
-        <section>
-            <h2>Common Strategies</h2>
-            <ul>
-                <li>Collaboration</li>
-                <li>Compromise</li>
-                <li>Avoidance</li>
-                <li>Accommodation</li>
-            </ul>
-        </section>
-        <section>
-            <h2>Steps to Resolve Conflicts</h2>
-            <ol>
-                <li>Identify the source of the conflict.</li>
-                <li>Listen to each party's perspective.</li>
-                <li>Find common ground.</li>
-                <li>Develop a resolution strategy.</li>
-                <li>Implement the solution.</li>
-                <li>Follow up to ensure resolution.</li>
-            </ol>
-        </section>
-    </main>
-    <footer>
-        <p>&copy; 2026 Conflict Resolution Inc.</p>
-    </footer>
+    <h1>Conflict Resolution Cheatsheet</h1>
+    <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
+    <div class="tabs">
+        <button class="tab-button active" onclick="showTab('universal')">Universal</button>
+        <button class="tab-button" onclick="showTab('commercial')">Commercial</button>
+        <button class="tab-button" onclick="showTab('peer')">Peer</button>
+        <button class="tab-button" onclick="showTab('hierarchical')">Hierarchical</button>
+    </div>
+    <div class="tab universal tab-content" style="display:block;">
+        <h2>Universal Conflict Resolution Strategies</h2>
+        <p>Details about Universal conflict resolution.</p>
+    </div>
+    <div class="tab commercial tab-content">
+        <h2>Commercial Conflict Resolution Strategies</h2>
+        <p>Details about Commercial conflict resolution.</p>
+    </div>
+    <div class="tab peer tab-content">
+        <h2>Peer Conflict Resolution Strategies</h2>
+        <p>Details about Peer conflict resolution.</p>
+    </div>
+    <div class="tab hierarchical tab-content">
+        <h2>Hierarchical Conflict Resolution Strategies</h2>
+        <p>Details about Hierarchical conflict resolution.</p>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            const tabs = document.querySelectorAll('.tab');
+            const buttons = document.querySelectorAll('.tab-button');
+            tabs.forEach(tab => { tab.style.display = 'none'; });
+            buttons.forEach(button => { button.classList.remove('active'); });
+            document.querySelector('.' + tabName).style.display = 'block';
+            document.querySelector('.tab-button[onclick="showTab(\'' + tabName + '\')"]').classList.add('active');
+        }
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+        }
+    </script>
 </body>
 </html>
