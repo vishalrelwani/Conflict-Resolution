@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conflict Resolution Cheatsheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme="light"]{
+  --color-bg:#f7f6f2;--color-surface:#f9f8f5;--color-surface-2:#fbfbf9;
+  --color-surface-offset:#f0ede8;--color-divider:#dcd9d5;--color-border:#d4d1ca;
+  --color-text:#28251d;--color-text-muted:#6b6965;--color-text-faint:#b0aead;
+  --color-primary:#01696f;--color-primary-hover:#0c4e54;--color-primary-light:#e0eceb;
+  --color-commercial:#7a39bb;--color-commercial-light:#ede4f8;
+  --color-peer:#006494;--color-peer-light:#ddeaf4;
+  --color-hierarchical:#964219;--color-hierarchical-light:#f0e4d8;
+  --color-success:#437a22;--color-success-light:#dff0d4;
+  --color-warning:#c08800;--color-warning-light:#f5edd4;
+  --color-error:#a12c7b;--color-error-light:#f5e4ef;
+  --shadow-sm:0 1px 3px rgba(40,37,29,0.07);
+  --shadow-md:0 4px 16px rgba(40,37,29,0.09);
+  --shadow-lg:0 12px 36px rgba(40,37,29,0.13);
+  --radius-sm:0.375rem;--radius-md:0.5rem;--radius-lg:0.75rem;--radius-xl:1rem;--radius-full:9999px;
+  --font-display:"Instrument Serif",Georgia,serif;
+  --font-body:"DM Sans","Helvetica Neue",sans-serif;
+  --text-xs:clamp(0.75rem,0.7rem + 0.25vw,0.875rem);
+  --text-sm:clamp(0.875rem,0.8rem + 0.35vw,1rem);
+  --text-base:clamp(1rem,0.95rem + 0.25vw,1.125rem);
+  --text-lg:clamp(1.125rem,1rem + 0.75vw,1.5rem);
+  --text-xl:clamp(1.5rem,1.2rem + 1.25vw,2.25rem);
+  --text-2xl:clamp(2rem,1.2rem + 2.5vw,3.2rem);
+  --space-1:0.25rem;--space-2:0.5rem;--space-3:0.75rem;--space-4:1rem;--space-5:1.25rem;
+  --space-6:1.5rem;--space-8:2rem;--space-10:2.5rem;--space-12:3rem;--space-16:4rem;
+  --tr:180ms cubic-bezier(0.16,1,0.3,1);
+}
+[data-theme="dark"]{
+  --color-bg:#171614;--color-surface:#1c1b19;--color-surface-2:#201f1d;
+  --color-surface-offset:#242320;--color-divider:#262523;--color-border:#393836;
+  --color-text:#cdccca;--color-text-muted:#797876;--color-text-faint:#5a5957;
+  --color-primary:#4f98a3;--color-primary-hover:#6db5bf;--color-primary-light:#1f3234;
+  --color-commercial:#a86fdf;--color-commercial-light:#2e2340;
+  --color-peer:#5591c7;--color-peer-light:#1a2a38;
+  --color-hierarchical:#bb653b;--color-hierarchical-light:#352014;
+  --color-success:#6daa45;--color-success-light:#1a2c10;
+  --color-warning:#e8af34;--color-warning-light:#312808;
+  --color-error:#d163a7;--color-error-light:#321020;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.25);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.35);
+  --shadow-lg:0 12px 36px rgba(0,0,0,0.45);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;scroll-behavior:smooth;scroll-padding-top:5rem;}
+body{min-height:100dvh;line-height:1.6;font-family:var(--font-body);font-size:var(--text-base);color:var(--color-text);background:var(--color-bg);transition:background var(--tr),color var(--tr);}
+img{display:block;max-width:100%;height:auto;}
+p{max-width:72ch;}
+h1,h2,h3,h4{text-wrap:balance;line-height:1.2;}
+a,button,[role=button],input,select,textarea{transition:color var(--tr),background var(--tr),border-color var(--tr),box-shadow var(--tr);}
+button{cursor:pointer;background:none;border:none;font:inherit;color:inherit;}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:color-mix(in srgb,var(--color-bg) 88%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--color-divider);padding:var(--space-3) var(--space-6);}
+.nav-inner{max-width:1140px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);flex-wrap:wrap;}
+.nav-brand{display:flex;align-items:center;gap:var(--space-3);}
+.nav-title{font-family:var(--font-display);font-size:var(--text-lg);line-height:1.2;}
+.nav-sub{font-size:var(--text-xs);color:var(--color-text-muted);letter-spacing:.05em;text-transform:uppercase;}
+.tabs{display:flex;gap:2px;background:var(--color-surface-offset);border-radius:var(--radius-full);padding:3px;}
+.tab{padding:var(--space-2) var(--space-4);border:none;background:transparent;font-family:var(--font-body);font-size:var(--text-sm);font-weight:500;color:var(--color-text-muted);border-radius:var(--radius-full);cursor:pointer;white-space:nowrap;transition:all var(--tr);}
+.tab:hover{color:var(--color-text);}
+.tab.on{background:var(--color-surface-2);color:var(--color-text);box-shadow:var(--shadow-sm);}
+.tog{width:36px;height:36px;border:none;background:var(--color-surface-offset);border-radius:var(--radius-full);display:flex;align-items:center;justify-content:center;color:var(--color-text-muted);flex-shrink:0;}
+.tog:hover{background:var(--color-border);color:var(--color-text);}
+
+/* HERO */
+.hero{max-width:1140px;margin:0 auto;padding:var(--space-10) var(--space-6) var(--space-8);}
+.badge{display:inline-flex;align-items:center;gap:var(--space-2);background:var(--color-primary-light);color:var(--color-primary);border-radius:var(--radius-full);padding:3px var(--space-3);font-size:var(--text-xs);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:var(--space-4);}
+.hero h1{font-family:var(--font-display);font-size:var(--text-2xl);margin-bottom:var(--space-3);}
+.hero h1 em{font-style:italic;color:var(--color-primary);}
+.hero-lead{font-size:var(--text-lg);color:var(--color-text-muted);max-width:58ch;margin-bottom:var(--space-8);}
+.principles{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:var(--space-3);}
+.pcard{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-4);display:flex;gap:var(--space-3);align-items:flex-start;}
+.pnum{font-family:var(--font-display);font-size:var(--text-xl);color:var(--color-primary);opacity:.35;line-height:1;flex-shrink:0;margin-top:-4px;}
+.ptxt{font-size:var(--text-sm);color:var(--color-text-muted);}
+.ptxt strong{display:block;color:var(--color-text);font-size:var(--text-sm);font-weight:600;margin-bottom:2px;}
+
+/* CONTENT */
+.main{max-width:1140px;margin:0 auto;padding:0 var(--space-6) var(--space-16);}
+.panel{display:none;}
+.panel.on{display:block;}
+.sec-hd{display:flex;align-items:flex-start;gap:var(--space-3);margin-bottom:var(--space-8);padding-bottom:var(--space-4);border-bottom:2px solid var(--color-divider);}
+.sec-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;margin-top:6px;}
+.sec-hd h2{font-family:var(--font-display);font-size:var(--text-xl);}
+.sec-hd p{font-size:var(--text-sm);color:var(--color-text-muted);margin-top:4px;}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:repeat(auto-fill,minmax(460px,1fr));gap:var(--space-5);}
+.g3{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:var(--space-4);}
+.g2x{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-6);}
+
+/* CARD */
+.card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:var(--space-6);box-shadow:var(--shadow-sm);}
+.card:hover{box-shadow:var(--shadow-md);}
+.card-ico{width:38px;height:38px;border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;margin-bottom:var(--space-3);font-size:1.1rem;}
+.card h3{font-size:var(--text-base);font-weight:600;margin-bottom:var(--space-2);}
+.card-desc{font-size:var(--text-sm);color:var(--color-text-muted);margin-bottom:var(--space-4);}
+
+/* QUOTE */
+.qt{background:var(--color-primary-light);border-left:3px solid var(--color-primary);border-radius:0 var(--radius-lg) var(--radius-lg) 0;padding:var(--space-4) var(--space-5);margin-bottom:var(--space-8);}
+.qt p{font-family:var(--font-display);font-style:italic;font-size:var(--text-lg);color:var(--color-primary);line-height:1.5;}
+.qt cite{display:block;font-style:normal;font-size:var(--text-xs);color:var(--color-text-muted);margin-top:var(--space-2);}
+
+/* STEPS */
+.steps{display:flex;flex-direction:column;gap:var(--space-3);}
+.step{display:flex;gap:var(--space-3);align-items:flex-start;}
+.sn{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:2px;}
+.st{font-size:var(--text-sm);font-weight:600;}
+.sd{font-size:var(--text-xs);color:var(--color-text-muted);margin-top:2px;}
+
+/* DO DONT */
+.dd{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3);}
+.do,.dn{border-radius:var(--radius-lg);padding:var(--space-4);}
+.do{background:var(--color-success-light);border:1px solid rgba(67,122,34,.2);}
+.dn{background:var(--color-error-light);border:1px solid rgba(161,44,123,.2);}
+.dl{font-size:var(--text-xs);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:var(--space-3);}
+.do .dl{color:var(--color-success);}
+.dn .dl{color:var(--color-error);}
+.do li,.dn li{font-size:var(--text-sm);margin-bottom:var(--space-2);padding-left:var(--space-4);position:relative;list-style:none;}
+.do li::before{content:"✓";position:absolute;left:0;color:var(--color-success);font-weight:700;}
+.dn li::before{content:"✕";position:absolute;left:0;color:var(--color-error);font-weight:700;}
+
+/* LADDER */
+.ladder{display:flex;flex-direction:column;gap:var(--space-1);margin-bottom:var(--space-8);}
+.rung{display:flex;align-items:center;gap:var(--space-4);padding:var(--space-3) var(--space-4);border-radius:var(--radius-lg);border:1px solid var(--color-border);background:var(--color-surface);}
+.rn{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:var(--text-xs);font-weight:700;flex-shrink:0;}
+.rb{flex:1;}
+.rt{font-size:var(--text-sm);font-weight:600;}
+.rm{font-size:var(--text-xs);color:var(--color-text-muted);margin-top:2px;}
+.rbadge{font-size:var(--text-xs);font-weight:600;padding:2px var(--space-3);border-radius:var(--radius-full);white-space:nowrap;}
+.arr{text-align:center;color:var(--color-text-faint);font-size:0.8rem;padding:3px 0;}
+
+/* TABLE */
+.tw{overflow-x:auto;border-radius:var(--radius-lg);border:1px solid var(--color-border);margin-top:var(--space-4);}
+table{width:100%;border-collapse:collapse;background:var(--color-surface);font-size:var(--text-sm);}
+th{background:var(--color-surface-offset);color:var(--color-text-muted);font-size:var(--text-xs);font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:var(--space-3) var(--space-4);text-align:left;border-bottom:1px solid var(--color-border);}
+td{padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--color-divider);vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--color-surface-offset);}
+td:first-child{font-weight:600;}
+
+/* PILL */
+.pill{display:inline-block;border-radius:var(--radius-full);padding:1px var(--space-3);font-size:var(--text-xs);font-weight:600;}
+
+/* UCARD */
+.ucard{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:var(--space-5);box-shadow:var(--shadow-sm);}
+.uh{display:flex;align-items:flex-start;gap:var(--space-3);margin-bottom:var(--space-3);}
+.un{font-family:var(--font-display);font-size:var(--text-xl);color:var(--color-primary);line-height:1;opacity:.4;flex-shrink:0;}
+.utitle{font-size:var(--text-base);font-weight:700;}
+.usub{font-size:var(--text-xs);color:var(--color-text-muted);}
+.ubody{font-size:var(--text-sm);color:var(--color-text-muted);line-height:1.65;}
+.utags{display:flex;flex-wrap:wrap;gap:var(--space-2);margin-top:var(--space-3);}
+.utag{font-size:var(--text-xs);color:var(--color-text-muted);background:var(--color-surface-offset);border:1px solid var(--color-border);border-radius:var(--radius-full);padding:2px var(--space-3);}
+
+hr{border:none;border-top:1px solid var(--color-divider);margin:var(--space-8) 0;}
+.sh{font-family:var(--font-display);font-size:var(--text-lg);margin-bottom:var(--space-5);}
+
+@media(max-width:840px){
+  .nav-inner{gap:var(--space-2);}
+  .tabs{flex-wrap:wrap;}
+  .tab{font-size:0.75rem;padding:var(--space-2) var(--space-3);}
+  .g2,.g3,.g2x{grid-template-columns:1fr;}
+  .dd{grid-template-columns:1fr;}
+  .hero{padding:var(--space-8) var(--space-4) var(--space-6);}
+  .main{padding:0 var(--space-4) var(--space-12);}
+  .principles{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:480px){
+  .principles{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <svg width="30" height="30" viewBox="0 0 30 30" fill="none" aria-label="logo">
+        <circle cx="15" cy="15" r="14" stroke="var(--color-primary)" stroke-width="1.4"/>
+        <path d="M9 15 Q15 8 21 15 Q15 22 9 15Z" fill="var(--color-primary)" opacity=".15"/>
+        <circle cx="9" cy="15" r="2.5" fill="var(--color-primary)"/>
+        <circle cx="21" cy="15" r="2.5" fill="var(--color-primary)"/>
+        <path d="M11.5 15 L18.5 15" stroke="var(--color-primary)" stroke-width="1.3" stroke-dasharray="2 2"/>
+      </svg>
+      <div>
+        <div class="nav-title">Conflict Resolution</div>
+        <div class="nav-sub">5,000 years of diplomatic wisdom · Applied</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:var(--space-3);">
+      <div class="tabs">
+        <button class="tab on" onclick="show('universal',this)">Universal OS</button>
+        <button class="tab" onclick="show('commercial',this)">Commercial</button>
+        <button class="tab" onclick="show('peer',this)">Peer</button>
+        <button class="tab" onclick="show('hierarchical',this)">Hierarchical</button>
+      </div>
+      <button class="tog" id="themetog" aria-label="Toggle dark mode">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="badge">
+    <svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="currentColor"/></svg>
+    Diplomatic Principles · Applied to Business & Workplace
+  </div>
+  <h1>Resolve conflicts like a<br><em>5,000-year-old diplomat</em></h1>
+  <p class="hero-lead">From the Bronze Age Silver Treaty to Harvard's negotiation lab — the same six principles underpin every durable resolution, whether between empires or colleagues.</p>
+  <div class="principles">
+    <div class="pcard"><span class="pnum">1</span><div class="ptxt"><strong>Acknowledge legitimacy first</strong>Before you advocate, validate the other side's perspective.</div></div>
+    <div class="pcard"><span class="pnum">2</span><div class="ptxt"><strong>Separate person from problem</strong>Attack the issue, never the individual.</div></div>
+    <div class="pcard"><span class="pnum">3</span><div class="ptxt"><strong>Interests, not positions</strong>Ask "why" until you reach the real driver.</div></div>
+    <div class="pcard"><span class="pnum">4</span><div class="ptxt"><strong>Build a survivable framework</strong>Aim for arrangements both sides can live with.</div></div>
+    <div class="pcard"><span class="pnum">5</span><div class="ptxt"><strong>Never humiliate the loser</strong>The Versailles mistake destroys tomorrows.</div></div>
+    <div class="pcard"><span class="pnum">6</span><div class="ptxt"><strong>Escalate process, not emotions</strong>Move to neutral parties before using force.</div></div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- UNIVERSAL -->
+<div class="panel on" id="panel-universal">
+  <div class="sec-hd">
+    <div class="sec-dot" style="background:var(--color-primary)"></div>
+    <div><h2>The Universal Operating System</h2><p>Six principles that work across every conflict context — from ancient empires to modern boardrooms</p></div>
+  </div>
+  <div class="qt">
+    <p>"Mutual acknowledgment of the other side's legitimacy, combined with rules both sides find survivable, produces more durable peace than military victory alone."</p>
+    <cite>— Pattern across 5,000 years of conflict resolution history</cite>
+  </div>
+  <div class="g3" style="margin-bottom:var(--space-8);">
+    <div class="ucard">
+      <div class="uh"><span class="un">1</span><div><div class="utitle">Acknowledge Legitimacy First</div><div class="usub">The single highest-leverage move</div></div></div>
+      <div class="ubody">Before stating your position, explicitly acknowledge the other party's perspective as valid. People become dramatically more flexible once genuinely heard. Validate first, then advocate — never the reverse.</div>
+      <div class="utags"><span class="utag">Cyrus restoring Babylonian temples</span><span class="utag">Harvard IBN Model</span></div>
+    </div>
+    <div class="ucard">
+      <div class="uh"><span class="un">2</span><div><div class="utitle">Separate Person from Problem</div><div class="usub">Attack the issue, not the individual</div></div></div>
+      <div class="ubody">Keep conflict focused on the problem, not character or motives. Language shift: "This process creates bottlenecks" vs "You are inefficient." The moment it becomes personal, rational resolution becomes nearly impossible.</div>
+      <div class="utags"><span class="utag">Fisher &amp; Ury — Getting to Yes</span><span class="utag">Westphalia: ignored who was right</span></div>
+    </div>
+    <div class="ucard">
+      <div class="uh"><span class="un">3</span><div><div class="utitle">Diagnose Interests, Not Positions</div><div class="usub">Ask "why" until you reach the root</div></div></div>
+      <div class="ubody">Positions = what someone says they want. Interests = why they want it. Every sustainable agreement is built on interests. Keep asking "what's driving this?" until the real need emerges — security, recognition, or autonomy.</div>
+      <div class="utags"><span class="utag">Amarna Letters system</span><span class="utag">Kautilya's Shadgunyam</span></div>
+    </div>
+    <div class="ucard">
+      <div class="uh"><span class="un">4</span><div><div class="utitle">Build a Survivable Framework</div><div class="usub">Not a win — a durable arrangement</div></div></div>
+      <div class="ubody">The goal is never to be right. A brilliant solution one party resists fails in implementation. An imperfect solution both parties own outlasts it. Design for durability, not victory.</div>
+      <div class="utags"><span class="utag">Silver Treaty 1259 BCE</span><span class="utag">Concert of Vienna 1815</span></div>
+    </div>
+    <div class="ucard">
+      <div class="uh"><span class="un">5</span><div><div class="utitle">Never Humiliate the Loser</div><div class="usub">The Versailles mistake is eternal</div></div></div>
+      <div class="ubody">Versailles humiliated Germany in 1919. The result was WWII. In business: a peer who loses face publicly becomes an internal adversary for years. Always leave the other party a dignified narrative — even if you achieved your objective.</div>
+      <div class="utags"><span class="utag">Versailles → WWII (failure)</span><span class="utag">Vienna → 100yr peace (success)</span></div>
+    </div>
+    <div class="ucard">
+      <div class="uh"><span class="un">6</span><div><div class="utitle">Escalate Process, Not Emotions</div><div class="usub">The ADR ladder is your infrastructure</div></div></div>
+      <div class="ubody">When bilateral resolution fails, move to a structured neutral process — don't escalate emotionally or use positional power. Structure replaces heat. Delphi for Greeks; mediation/arbitration for business; HR for internal conflicts.</div>
+      <div class="utags"><span class="utag">Amphictyonic League at Delphi</span><span class="utag">ADR ladder</span></div>
+    </div>
+  </div>
+  <hr>
+  <h3 class="sh">The Coercion Paradox — Know It, Avoid It</h3>
+  <div class="g2">
+    <div class="card">
+      <div class="card-ico" style="background:var(--color-warning-light);color:var(--color-warning);">⚠</div>
+      <h3>When Pressure Backfires</h3>
+      <p class="card-desc">The more you rely on positional power or threats, the more you trigger "negative expectations" — the other party calculates they have nothing left to lose and escalates rather than complies. This is the Copeland Paradox.</p>
+      <div class="dd">
+        <div class="dn"><div class="dl">Backfires</div><ul><li>Public shaming</li><li>Ultimatums without exit ramps</li><li>Withholding resources repeatedly</li><li>Over-leveraging seniority</li></ul></div>
+        <div class="do"><div class="dl">Works</div><ul><li>Private, face-saving channels first</li><li>Incentive-aligned framing</li><li>Neutral process as the vehicle</li><li>Mutual accountability</li></ul></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-ico" style="background:var(--color-primary-light);color:var(--color-primary);">⚖</div>
+      <h3>Know Your BATNA</h3>
+      <p class="card-desc">Your Best Alternative To a Negotiated Agreement is your real source of leverage — not aggression. Knowing your walk-away option prevents both capitulating under pressure and escalating unnecessarily.</p>
+      <div class="steps">
+        <div class="step"><div class="sn" style="background:var(--color-primary-light);color:var(--color-primary);">1</div><div><div class="st">Define your BATNA clearly</div><div class="sd">What happens if this negotiation fails? Be honest with yourself.</div></div></div>
+        <div class="step"><div class="sn" style="background:var(--color-primary-light);color:var(--color-primary);">2</div><div><div class="st">Estimate their BATNA</div><div class="sd">What do they lose if talks fail? This reveals their real flexibility.</div></div></div>
+        <div class="step"><div class="sn" style="background:var(--color-primary-light);color:var(--color-primary);">3</div><div><div class="st">Negotiate in the Zone of Agreement</div><div class="sd">Any deal better than both BATNAs is achievable — focus only there.</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COMMERCIAL -->
+<div class="panel" id="panel-commercial">
+  <div class="sec-hd">
+    <div class="sec-dot" style="background:var(--color-commercial)"></div>
+    <div><h2>Commercial Conflicts</h2><p>Between companies, business partners, suppliers, and clients — two sovereign parties like ancient city-states</p></div>
+  </div>
+  <div class="qt" style="background:var(--color-commercial-light);border-left-color:var(--color-commercial);">
+    <p style="color:var(--color-commercial);">"Draft dispute resolution clauses into every commercial contract before conflict arises — not after. Build the Concert of Europe before you need it."</p>
+    <cite>— Concert of Europe principle applied to commercial contracts</cite>
+  </div>
+  <h3 class="sh">The ADR Escalation Ladder</h3>
+  <p style="font-size:var(--text-sm);color:var(--color-text-muted);margin-bottom:var(--space-5);max-width:60ch;">Always start at the bottom. Move up only when lower steps fail. The higher you go, the more expensive, slower, and relationship-destroying it becomes.</p>
+  <div class="ladder">
+    <div class="rung" style="border-left:3px solid var(--color-success);">
+      <div class="rn" style="background:var(--color-success-light);color:var(--color-success);">1</div>
+      <div class="rb"><div class="rt">Direct Negotiation</div><div class="rm">Cost: Minimal · Speed: Days · Relationship: Positive if handled well</div></div>
+      <span class="rbadge" style="background:var(--color-success-light);color:var(--color-success);">First resort</span>
+    </div>
+    <div class="arr">↓ if stuck →</div>
+    <div class="rung" style="border-left:3px solid var(--color-primary);">
+      <div class="rn" style="background:var(--color-primary-light);color:var(--color-primary);">2</div>
+      <div class="rb"><div class="rt">Mediation — Neutral Facilitator (Non-binding)</div><div class="rm">Cost: Low-Medium · Speed: Weeks · Highest satisfaction rates · Preserves relationship</div></div>
+      <span class="rbadge" style="background:var(--color-primary-light);color:var(--color-primary);">Recommended</span>
+    </div>
+    <div class="arr">↓ if stuck →</div>
+    <div class="rung" style="border-left:3px solid var(--color-peer);">
+      <div class="rn" style="background:var(--color-peer-light);color:var(--color-peer);">3</div>
+      <div class="rb"><div class="rt">Arbitration — Binding Third-Party Decision</div><div class="rm">Cost: Medium · Speed: Months · Binding: Yes · Relationship: Strained but survives</div></div>
+      <span class="rbadge" style="background:var(--color-peer-light);color:var(--color-peer);">When binding needed</span>
+    </div>
+    <div class="arr">↓ last resort →</div>
+    <div class="rung" style="border-left:3px solid var(--color-error);">
+      <div class="rn" style="background:var(--color-error-light);color:var(--color-error);">4</div>
+      <div class="rb"><div class="rt">Litigation — Court Proceedings</div><div class="rm">Cost: High–Very High · Speed: Years · Relationship: Destroyed · Outcome: Uncertain</div></div>
+      <span class="rbadge" style="background:var(--color-error-light);color:var(--color-error);">= War</span>
+    </div>
+  </div>
+  <h3 class="sh">Practical Toolkit</h3>
+  <div class="g2">
+    <div class="card">
+      <div class="card-ico" style="background:var(--color-commercial-light);color:var(--color-commercial);">📋</div>
+      <h3>Before Conflict: Contract Architecture</h3>
+      <p class="card-desc">Every commercial agreement should include a built-in dispute resolution clause. This is the Concert of Europe principle — build the architecture before you need it.</p>
+      <div class="steps">
+        <div class="step"><div class="sn" style="background:var(--color-commercial-light);color:var(--color-commercial);">1</div><div><div class="st">Specify the escalation path in the contract</div><div class="sd">Negotiation → Mediation → Arbitration → Jurisdiction for litigation</div></div></div>
+        <div class="step"><div class="sn" style="background:var(--color-commercial-light);color:var(--color-commercial);">2</div><div><div class="st">Agree on arbitration seat in advance</div><div class="sd">HKIAC, SIAC, ICC — choose neutral jurisdiction before conflict arises</div></div></div>
+        <div class="step"><div class="sn" style="background:var(--color-commercial-light);color:var(--color-commercial);">3</div><div><div class="st">Build cooling-off periods</div><div class="sd">30–60 days of required negotiation before escalating to formal process</div></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-ico" style="background:var(--color-commercial-light);color:var(--color-commercial);">🎯</div>
+      <h3>During Conflict: The BATNA Framework</h3>
+      <p class="card-desc">Before any commercial negotiation, map all four questions below. This prevents both unnecessary capitulation and unnecessary escalation.</p>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Question</th><th>What it reveals</th></tr></thead>
+          <tbody>
+            <tr><td>What is our BATNA?</td><td>Our real minimum acceptable outcome</td></tr>
+            <tr><td>What is their BATNA?</td><td>Their likely walk-away — defines their flexibility</td></tr>
+            <tr><td>What is the Zone of Agreement?</td><td>Any deal better than both BATNAs</td></tr>
+            <tr><td>What interests are hidden?</td><td>The real "why" behind their stated position</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-ico" style="background:var(--color-commercial-light);color:var(--color-commercial);">🤝</div>
+      <h3>When to Use Mediation</h3>
+      <div class="dd">
+        <div class="do"><div class="dl">Use When</div><ul><li>Relationship has future value</li><li>Both parties want resolution</li><li>Communication has broken down</li><li>Litigation costs are prohibitive</li></ul></div>
+        <div class="dn"><div class="dl">Avoid When</div><ul><li>One party is bad faith</li><li>Power imbalance is extreme</li><li>Legal precedent is required</li><li>Criminal conduct is involved</li></ul></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-ico" style="background:var(--color-commercial-light);color:var(--color-commercial);">🔗</div>
+      <h3>Supply Chain Conflicts: Special Rules</h3>
+      <div class="steps">
+        <div class="step"><div class="sn" style="background:var(--color-commercial-light);color:var(--color-commercial);">1</div><div><div class="st">Separate continuity from the dispute</div><div class="sd">Keep goods/services flowing while the financial dispute resolves separately</div></div></div>
+        <div class="step"><div class="sn" style="background:var(--color-commercial-light);color:var(--color-commercial);">2</div><div><div class="st">Use escrow for disputed amounts</div><div class="sd">Neutral escrow preserves both parties' positions without either holding contested value</div></div></div>
+        <div class="step"><div class="sn" style="background:var(--color-commercial-light);color:var(--color-commercial);">3</div><div><div class="st">Apply the ECSC logic</div><div class="sd">Can you create a joint mechanism where both parties co-own the outcome? Shared risk = shared interest in resolution.</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PEER -->
+<div class="panel" id="panel-peer">
+  <div class="sec-hd">
+    <div class="sec-dot" style="background:var(--color-peer)"></div>
+    <div><h2>Peer / Horizontal Conflicts</h2><p>Between colleagues of equal rank — sovereign equals who need a shared framework, like Greek city-states</p></div>
+  </div>
+  <div class="qt" style="background:var(--color-peer-light);border-left-color:var(--color-peer);">
+    <p style="color:var(--color-peer);">"The Amphictyons at Delphi worked because Delphi was sacred neutral ground. The moment you introduce a structured process, you shift from a battle of egos to a rules-based one."</p>
+    <cite>— The Delphi Principle applied to every team meeting</cite>
+  </div>
+  <div class="g2" style="margin-bottom:var(--space-8);">
+    <div class="card">
+      <div class="card-ico" style="background:var(--color-peer-light);color:var(--color-peer);">🏛</div>
+      <h3>Step 1: Create Neutral Institutional Space</h3>
+      <p class="card-desc">Bilateral personal conflicts escalate when they stay informal. Introducing a structured process changes the dynamic entirely.</p>
+      <div class="steps">
+        <div class="step"><div class="sn" style="background:var(--color-peer-light);color:var(--color-peer);">1</div><div><div class="st">Propose a structured meeting — not a chat</div><div class="sd">"Can we block 30 minutes to work through this properly?" signals seriousness and respect</div></div></div>
+        <div class="step"><div class="sn" style="background:var(--color-peer-light);color:var(--color-peer);">2</div><div><div class="st">Agree ground rules before starting</div><div class="sd">Both speak without interruption · Focus on issue not each other · Confidentiality</div></div></div>
+        <div class="step"><div class="sn" style="background:var(--color-peer-light);color:var(--color-peer);">3</div><div><div class="st">If stuck: invite a neutral peer or HR facilitator</div><div class="sd">Not to adjudicate — to facilitate. Like the Amphictyonic neutral third city-state</div></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-ico" style="background:var(--color-peer-light);color:var(--color-peer);">🎭</div>
+      <h3>The Validate-Then-Advocate Sequence</h3>
+      <p class="card-desc">The single highest-leverage behaviour in peer conflict. The sequence is critical — doing it in reverse almost always escalates.</p>
+      <div class="steps">
+        <div class="step"><div class="sn" style="background:var(--color-peer-light);color:var(--color-peer);">1</div><div><div class="st">Validate first — explicitly</div><div class="sd">"I understand why you see it that way — the Q3 data does point in that direction."</div></div></div>
+        <div class="step"><div class="sn" style="background:var(--color-peer-light);color:var(--color-peer);">2</div><div><div class="st">Then ask a question, not make a statement</div><div class="sd">"Can I share a different piece of context that might change the picture?"</div></div></div>
+        <div class="step"><div class="sn" style="background:var(--color-peer-light);color:var(--color-peer);">3</div><div><div class="st">Advocate from shared, objective data</div><div class="sd">Root your position in criteria both parties accept — not opinion vs. opinion</div></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-ico" style="background:var(--color-peer-light);color:var(--color-peer);">🎯</div>
+      <h3>Reframe Around Shared Goals (ECSC Logic)</h3>
+      <p class="card-desc">Find the shared objective both parties need to succeed, and make that the frame. Shifts "my process vs yours" to "how do we both win?"</p>
+      <div class="dd">
+        <div class="dn"><div class="dl">Position Frame</div><ul><li>"We should use my approach"</li><li>"Your method caused the delay"</li><li>"I disagree with your decision"</li></ul></div>
+        <div class="do"><div class="dl">Interest + Shared Goal</div><ul><li>"We both want this delivered on time — which approach gets us there?"</li><li>"What caused the delay and how do we prevent it?"</li><li>"Can we look at the data together?"</li></ul></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-ico" style="background:var(--color-peer-light);color:var(--color-peer);">🚫</div>
+      <h3>The No-Humiliation Rule</h3>
+      <p class="card-desc">Winning at the cost of a colleague's dignity in front of others creates an internal adversary for years. The victory costs more than it's worth.</p>
+      <div class="steps">
+        <div class="step"><div class="sn" style="background:var(--color-error-light);color:var(--color-error);">✕</div><div><div class="st">Never challenge a peer publicly</div><div class="sd">Disagreements belong in private. Public correction = loss of face = long-term resentment</div></div></div>
+        <div class="step"><div class="sn" style="background:var(--color-error-light);color:var(--color-error);">✕</div><div><div class="st">Never "win" at someone's expense</div><div class="sd">If you leave with no dignified narrative for them, you've made an enemy</div></div></div>
+        <div class="step"><div class="sn" style="background:var(--color-success-light);color:var(--color-success);">✓</div><div><div class="st">Always give a face-saving exit</div><div class="sd">"Now that we have more data, it makes sense to go another way" — not "I was right all along"</div></div></div>
+      </div>
+    </div>
+  </div>
+  <h3 class="sh">Peer Conflict Escalation Path</h3>
+  <div class="ladder">
+    <div class="rung" style="border-left:3px solid var(--color-success);">
+      <div class="rn" style="background:var(--color-success-light);color:var(--color-success);">1</div>
+      <div class="rb"><div class="rt">Direct private conversation with structured process</div><div class="rm">Agenda agreed · Ground rules set · Focus on interests · No audience</div></div>
+      <span class="rbadge" style="background:var(--color-success-light);color:var(--color-success);">Always first</span>
+    </div>
+    <div class="arr">↓ if stuck →</div>
+    <div class="rung" style="border-left:3px solid var(--color-primary);">
+      <div class="rn" style="background:var(--color-primary-light);color:var(--color-primary);">2</div>
+      <div class="rb"><div class="rt">Neutral trusted peer as informal mediator (Track II)</div><div class="rm">Not to take sides — to facilitate dialogue and surface interests</div></div>
+      <span class="rbadge" style="background:var(--color-primary-light);color:var(--color-primary);">Track II</span>
+    </div>
+    <div class="arr">↓ if stuck →</div>
+    <div class="rung" style="border-left:3px solid var(--color-peer);">
+      <div class="rn" style="background:var(--color-peer-light);color:var(--color-peer);">3</div>
+      <div class="rb"><div class="rt">HR-facilitated structured mediation</div><div class="rm">Formal but non-binding · Preserves relationship · Documented outcome</div></div>
+      <span class="rbadge" style="background:var(--color-peer-light);color:var(--color-peer);">Formal neutral</span>
+    </div>
+    <div class="arr">↓ last resort →</div>
+    <div class="rung" style="border-left:3px solid var(--color-error);">
+      <div class="rn" style="background:var(--color-error-light);color:var(--color-error);">4</div>
+      <div class="rb"><div class="rt">Management escalation / formal grievance</div><div class="rm">Damages the relationship · Use only when conflict is unresolvable or involves misconduct</div></div>
+      <span class="rbadge" style="background:var(--color-error-light);color:var(--color-error);">Last resort</span>
+    </div>
+  </div>
+</div>
+
+<!-- HIERARCHICAL -->
+<div class="panel" id="panel-hierarchical">
+  <div class="sec-hd">
+    <div class="sec-dot" style="background:var(--color-hierarchical)"></div>
+    <div><h2>Hierarchical Conflicts</h2><p>Between people of different seniority — power asymmetry changes the incentive structure for both parties</p></div>
+  </div>
+  <div class="qt" style="background:var(--color-hierarchical-light);border-left-color:var(--color-hierarchical);">
+    <p style="color:var(--color-hierarchical);">"The most effective authority is not coerced — it is granted. A manager who wins by rank alone creates a client kingdom waiting to rebel."</p>
+    <cite>— Roman client kingdom lesson, applied to the modern workplace</cite>
+  </div>
+  <div class="g2x" style="margin-bottom:var(--space-8);">
+    <div>
+      <div style="display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-5);">
+        <div style="width:8px;height:8px;border-radius:50%;background:var(--color-peer);flex-shrink:0;"></div>
+        <h3 style="font-family:var(--font-display);font-size:var(--text-lg);">For the Less Powerful Party</h3>
+      </div>
+      <p style="font-size:var(--text-sm);color:var(--color-text-muted);margin-bottom:var(--space-4);">Kautilya: know your relative power position before choosing your instrument.</p>
+      <div class="card" style="margin-bottom:var(--space-4);">
+        <h3>Choose Your Instrument Wisely</h3>
+        <div class="tw">
+          <table>
+            <thead><tr><th>Your position</th><th>Best approach</th></tr></thead>
+            <tbody>
+              <tr><td><span class="pill" style="background:var(--color-success-light);color:var(--color-success);">Strong / clear data</span></td><td>Direct private conversation, data-backed framing</td></tr>
+              <tr><td><span class="pill" style="background:var(--color-warning-light);color:var(--color-warning);">Moderate / ambiguous</span></td><td>Structured meeting anchored on shared objectives</td></tr>
+              <tr><td><span class="pill" style="background:var(--color-error-light);color:var(--color-error);">Weak / politically exposed</span></td><td>Track II channels: mentor, skip-level; build coalition first</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <h3>The Aman Principle — Create Safe Conduct First</h3>
+        <div class="steps">
+          <div class="step"><div class="sn" style="background:var(--color-hierarchical-light);color:var(--color-hierarchical);">1</div><div><div class="st">Request private space, not public confrontation</div><div class="sd">"Can we find 15 minutes?" gives your manager a face-saving space to engage</div></div></div>
+          <div class="step"><div class="sn" style="background:var(--color-hierarchical-light);color:var(--color-hierarchical);">2</div><div><div class="st">Frame around shared interests, not grievances</div><div class="sd">"I want to flag something affecting team output" vs "I feel you treated me unfairly"</div></div></div>
+          <div class="step"><div class="sn" style="background:var(--color-hierarchical-light);color:var(--color-hierarchical);">3</div><div><div class="st">Know your BATNA before the conversation</div><div class="sd">HR escalation, formal grievance, or exit — know your options; don't reveal them prematurely</div></div></div>
+          <div class="step"><div class="sn" style="background:var(--color-hierarchical-light);color:var(--color-hierarchical);">4</div><div><div class="st">Use Track II if direct fails</div><div class="sd">A trusted mutual colleague or mentor can carry messages direct confrontation cannot</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-5);">
+        <div style="width:8px;height:8px;border-radius:50%;background:var(--color-hierarchical);flex-shrink:0;"></div>
+        <h3 style="font-family:var(--font-display);font-size:var(--text-lg);">For the More Powerful Party</h3>
+      </div>
+      <p style="font-size:var(--text-sm);color:var(--color-text-muted);margin-bottom:var(--space-4);">Ashoka's principle: moral authority compounds over time. Durable leadership is granted, not taken.</p>
+      <div class="card" style="margin-bottom:var(--space-4);">
+        <h3>The Coercion Trap for Managers</h3>
+        <p class="card-desc">Over-using positional power creates "negative expectations" — employees calculate they have nothing left to lose, generating quiet quitting or open resistance.</p>
+        <div class="dd">
+          <div class="dn"><div class="dl">Overusing Power</div><ul><li>Decisions without explanation</li><li>Dismissing concerns publicly</li><li>Using title to end a debate</li><li>Punishing pushback</li></ul></div>
+          <div class="do"><div class="dl">Building Moral Authority</div><ul><li>Acknowledge your own errors openly</li><li>Explain the "why" behind decisions</li><li>Fight for your team's interests</li><li>Create safe space for dissent</li></ul></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Manager's Resolution Protocol</h3>
+        <div class="steps">
+          <div class="step"><div class="sn" style="background:var(--color-hierarchical-light);color:var(--color-hierarchical);">1</div><div><div class="st">Listen to understand, not to respond</div><div class="sd">Ask "What's driving this for you?" before stating your view</div></div></div>
+          <div class="step"><div class="sn" style="background:var(--color-hierarchical-light);color:var(--color-hierarchical);">2</div><div><div class="st">Acknowledge the valid part explicitly</div><div class="sd">There is always something legitimate — find it and name it</div></div></div>
+          <div class="step"><div class="sn" style="background:var(--color-hierarchical-light);color:var(--color-hierarchical);">3</div><div><div class="st">Separate person from performance issue</div><div class="sd">"This output needs to change" — not "you are a problem"</div></div></div>
+          <div class="step"><div class="sn" style="background:var(--color-hierarchical-light);color:var(--color-hierarchical);">4</div><div><div class="st">Give the employee a dignified narrative</div><div class="sd">They need an exit that doesn't require admitting total defeat</div></div></div>
+          <div class="step"><div class="sn" style="background:var(--color-hierarchical-light);color:var(--color-hierarchical);">5</div><div><div class="st">Document agreements, not blame</div><div class="sd">Follow up in writing: what was agreed, not who was wrong</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <h3 class="sh">Language Reference: What Escalates vs. What De-escalates</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Situation</th><th style="color:var(--color-error);">✕ Escalates</th><th style="color:var(--color-success);">✓ De-escalates</th></tr></thead>
+      <tbody>
+        <tr><td>Disagreeing with a decision</td><td>"That's the wrong call."</td><td>"I have data that might change the picture — can I share it?"</td></tr>
+        <tr><td>Raising a grievance upward</td><td>"You treated me unfairly."</td><td>"I want to flag something affecting the team's output."</td></tr>
+        <tr><td>Addressing underperformance</td><td>"You keep making the same mistakes."</td><td>"This output pattern needs to change — what's blocking you?"</td></tr>
+        <tr><td>Challenging a peer's approach</td><td>"Your method is causing the delays."</td><td>"We both want this on time — where is the friction coming from?"</td></tr>
+        <tr><td>Ending a stuck discussion</td><td>"We'll do it my way." / "Fine, whatever."</td><td>"Let's park this, gather more data, and return with clear criteria."</td></tr>
+        <tr><td>When you were wrong</td><td>Silence or deflection</td><td>"I had incomplete information earlier — with this data, another approach makes more sense."</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+function show(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+  document.getElementById('panel-' + id).classList.add('on');
+  btn.classList.add('on');
+}
+(function(){
+  const tog = document.getElementById('themetog');
+  const root = document.documentElement;
+  let mode = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  root.setAttribute('data-theme', mode);
+  setIcon(mode);
+  tog.addEventListener('click', () => {
+    mode = mode === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', mode);
+    setIcon(mode);
+  });
+  function setIcon(m) {
+    tog.innerHTML = m === 'dark'
+      ? '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
+      : '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  }
+})();
+</script>
+</body>
+</html>
